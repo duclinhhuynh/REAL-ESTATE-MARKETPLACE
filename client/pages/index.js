@@ -4,8 +4,9 @@ import {useStateContext} from "../context";
 import {checkIfImage} from "../utils";
 import { exit } from 'process';
 import { ethers } from 'ethers';
+import { setPriority } from 'os';
 const index = () => {
-  const {address, connect, contract, realEstate, createPropertyFunction} = useStateContext();
+  const {address, connect, contract, realEstate, createPropertyFunction, getPropertiesData} = useStateContext();
   const [isLoading, setIsLoading] = useState(false);
   const [properties, setProperties] = useState([]);
   const [form, setForm] = useState({
@@ -36,6 +37,20 @@ const index = () => {
       }
     });
   }
+
+  //READ DATA OR GET DATA
+  const fetchProperty = async() => {
+    setIsLoading(true);
+    const data = await getPropertiesData();
+    setProperties(data);
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    if(contract) fetchProperty();
+  }, [address, contract]);
+
+  console.log(properties);
   return (
     <div>
       <h1>{realEstate}</h1>
